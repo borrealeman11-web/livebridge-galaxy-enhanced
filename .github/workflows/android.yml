@@ -1,10 +1,12 @@
-name: Android CI
+name: Build LiveBridge Galaxy Enhanced
 
 on:
+  workflow_dispatch:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
+
+permissions:
+  contents: read
 
 jobs:
   build:
@@ -30,5 +32,12 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Build debug APK
+      - name: Build APK
         run: flutter build apk --debug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: LiveBridge-Galaxy-Enhanced
+          path: build/app/outputs/flutter-apk/app-debug.apk
+
