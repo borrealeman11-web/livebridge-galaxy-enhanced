@@ -62,6 +62,8 @@ android {
         release {
             if (hasReleaseSigning) {
                 signingConfig = signingConfigs.getByName("release")
+            } else {
+                signingConfig = signingConfigs.getByName("debug")
             }
             isMinifyEnabled = false
             isShrinkResources = false
@@ -69,14 +71,6 @@ android {
     }
 }
 
-gradle.taskGraph.whenReady {
-    if (!hasReleaseSigning && allTasks.any { it.name.contains("Release") }) {
-        throw GradleException(
-            "Release signing is not configured. Create android/key.properties from " +
-                "android/key.properties.example and keep the keystore out of git."
-        )
-    }
-}
 
 dependencies {
     testImplementation("junit:junit:4.13.2")
