@@ -2010,7 +2010,19 @@ object LiveUpdateNotifier {
                 )
             )
         } else {
-            builder.setStyle(NotificationCompat.BigTextStyle().bigText(callMirrorBodyText ?: text))
+                        val expandedText = if (!callMirrorActive && !preferMediaControls &&
+                sbn.packageName.equals("com.whatsapp", ignoreCase = true)) {
+                runCatching {
+                    @Suppress("DEPRECATION")
+                    source.extras.getParcelableArray(Notification.EXTRA_MESSAGES)
+                        ?.let(Notification.MessagingStyle.Message::getMessagesFromBundleArray)
+                        ?.mapNotNull { it.text?.toString()?.trim()?.takeIf { value -> value.isNotEmpty() } }
+                        ?.takeLast(10)
+                        ?.takeIf { it.size > 1 }
+                        ?.joinToString("\n")
+                }.getOrNull()
+            } else null
+            builder.setStyle(NotificationCompat.BigTextStyle().bigText(expandedText ?: callMirrorBodyText ?: text))
         }
         if (callChronometerStart != null && !hasProgress) {
             builder.setShortCriticalText(
